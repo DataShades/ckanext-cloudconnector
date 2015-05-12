@@ -1,0 +1,10 @@
+*.egg-info
+*/*.pyc
+*/*/*.pyc
+*/*/*/*.pyc
+
+coverage*
+nosetests*
+.coverage
+cover/
+reports/*.xml
