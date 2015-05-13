@@ -21,6 +21,7 @@ setup(
     zip_safe=False,
     install_requires=[
         # -*- Extra requirements: -*-
+        'boto',
     ],
     entry_points='''
         [ckan.plugins]
