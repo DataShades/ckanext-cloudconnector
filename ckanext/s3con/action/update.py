@@ -1,6 +1,9 @@
-import ckan.model as model
+import ckan.model as cmodel
+from pylons import config
 import ckan.logic.action.update as origin
 import ckanext.s3con.s3.uploader as uploader
+
+import ckan.lib.app_globals as app_globals
 
 from ckan.logic import (
     NotFound,
@@ -15,8 +18,23 @@ log = logging.getLogger(__name__)
 
 __all__ = ['resource_update']
 
+import ckan.lib.app_globals as app_globals
+
+s3_option_items = [
+  'ckan.cloud_storage_enable',
+  'ckan.s3_aws_key',
+  'ckan.s3_secret_key',
+]
+
+def _get_config_value(key, default=''):
+  if cmodel.meta.engine.has_table('system_info'):
+      return cmodel.get_system_info(key)
+
+for key in s3_option_items:
+  app_globals.set_global(key, _get_config_value(key))
+
 def resource_update(context, data_dict):
-    if False:
+    if not config.get('ckan.cloud_storage_enable') or data_dict.get('url'):
         return origin.resource_update(context, data_dict)
 
     model = context['model']
@@ -56,7 +74,15 @@ def resource_update(context, data_dict):
         errors = e.error_dict['resources'][n]
         raise ValidationError(errors)
 
-    upload.upload(id, uploader.get_max_resource_size())
+    s3_link = upload.upload(id, uploader.get_max_resource_size())
+
+    # for n, r in enumerate(pkg_dict['resources']):
+    #     if r['id'] == id:
+    #         pkg_dict['resources'][n]['url_type'] = ''
+    #         pkg_dict['resources'][n]['ulr'] = 'fffff'
+    #         pkg_dict = _get_action('package_update')(context, pkg_dict)
+    #         break
+
     model.repo.commit()
     return _get_action('resource_show')(context, {'id': id})
 

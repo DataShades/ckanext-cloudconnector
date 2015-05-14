@@ -19,13 +19,11 @@ class S3Plugin(plugins.SingletonPlugin):
 
   def update_config(self, config):
     toolkit.add_template_directory(config, 'templates')
-    # toolkit.add_resource('fanstatic', 'dfmp')
-    # toolkit.add_public_directory(config, 'public')
 
   def before_map(self, map):
     map.connect(
       'cloud_connector_config', '/ckan-admin/cloud_connector_config',
       controller='ckanext.s3con.s3.controller:S3Controller',
-      action='config', ckan_icon='twitter-sign')
+      action='config', ckan_icon='cloud')
     return map
 

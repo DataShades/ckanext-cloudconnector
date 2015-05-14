@@ -1,4 +1,5 @@
 import ckan.model as model
+from pylons import config
 import ckan.logic.action.create as origin
 import ckanext.s3con.s3.uploader as uploader
 
@@ -16,7 +17,7 @@ log = logging.getLogger(__name__)
 __all__ = ['resource_create']
 
 def resource_create(context, data_dict):
-    if False:
+    if not config.get('ckan.cloud_storage_enable') or data_dict.get('url'):
         return origin.resource_create(context, data_dict)
     
     model = context['model']
