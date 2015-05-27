@@ -1,0 +1,101 @@
+.without-colon:after {
+  content: '';
+}
+
+.inline-radio-label {
+  display: inline;
+  top: 7px;
+  position: relative;
+}
+
+/* TOGGLE */
+
+.col-toggle {
+  position: relative;
+  overflow: hidden;
+  left: 10px;
+  width: 75px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.col-toggle input {
+  position: absolute;
+  top: -20px;
+}
+
+.col-toggle-label {
+  display: block;
+  overflow: hidden;
+  border: 1px solid #BBB;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.col-toggle-label:after {
+  content: '';
+}
+
+.col-toggle-inner {
+  margin-left: -100%;
+  transition: margin-left .20s;
+  width: 200%;
+}
+
+.col-toggle-inner:before,
+.col-toggle-inner:after {
+  float: left;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0;
+  width: 50%;
+  height: 30px;
+  color: #fff;
+  font: 600 16px/1 "Roboto Condensed", Arial;
+  font-weight: 700;
+  font-size: 1.1em;
+  line-height: 30px;
+}
+
+.col-toggle-inner:before {
+  padding-right: 25px;
+  background-color: #056c7f;
+  box-shadow: 0 4px 5px -2px rgba(0, 0, 0, 0.7) inset;
+  color: #ede112;
+  content: "ON";
+  text-align: center;
+  text-shadow: 0 -1px 0 #000;
+}
+
+.col-toggle-inner:after {
+  padding-left: 25px;
+  background-color: #FFF;
+  box-shadow: 0 4px 5px -2px rgba(0, 0, 0, 0.3) inset;
+  color: #056c7f;
+  content: "OFF";
+  text-align: center;
+}
+
+.col-toggle-switch {
+  position: absolute;
+  top: 0;
+  right: 48px;
+  bottom: 5px;
+  margin: 0;
+  width: 25px;
+  border: 1px solid #AAA;
+  border-radius: 3px;
+  background: #FFF;
+  box-shadow: 0 4px 0 -2px #F1F1F1 inset, 0 2em 2em -2em #AAA inset, 0 0 2px rgba(0, 0, 0, 0.5);
+  transition: right .20s;
+}
+
+.col-toggle.active .col-toggle-label .col-toggle-inner {
+  margin-left: 0;
+}
+
+.col-toggle.active .col-toggle-label .col-toggle-switch {
+  right: 0;
+}

@@ -1,44 +1,71 @@
+{% set enabled_s3 = data['ckan.cloud_storage_enable'] %}
+{% set failover_s3 = data['ckan.cloud_failover'] %}
 {% import 'macros/form.html' as form %}
 
 {% extends "admin/base.html" %}
-
+{% block scripts %}
+{{ super() }}
+{% resource 's3con/scripts/s3con_checkbox_switcher.js' %}
+{% endblock %}
 {% block primary_content_inner %}
-  <form method='post' action="" class="form-horizontal">
-    {% block admin_form %}
-      {{ form.checkbox('ckan.cloud_storage_enable', label=_('Enable'), checked=data['ckan.cloud_storage_enable'], value=1) }}
-      {{ form.input('ckan.s3_aws_key', label=_('Key'), value=data['ckan.s3_aws_key']) }}
-      {{ form.input('ckan.s3_secret_key', label=_('Secret'), value=data['ckan.s3_secret_key']) }}
-    {% endblock %}
-    <div class="form-actions">
-      {#
-      {% set locale = h.dump_json({'content': _('Are you sure you want to reset the config?')}) %}
-      <a href="{% url_for controller='admin', action='reset_config' %}" class="btn btn-danger pull-left" data-module="confirm-action" data-module-i18n="{{ locale }}">{{ _('Reset') }}</a>
-      #}
-      <button type="submit" class="btn btn-primary" name="save">{{ _('Update Config') }}</button>
+<form method='post' action="" class="form-horizontal" data-module="s3con-form-disabler">
+  {% block admin_form %}
+  <fieldset>
+    <legend>Cloud settings</legend>
+    <input type="hidden" name="ckan.cloud_storage_enable" value='False'>
+    <label for="" class="control-label">Cloud</label> 
+    <div class="col-toggle {{ 'active' if enabled_s3!='False' else '' }}" data-module="s3con-checkbox-switcher">
+      <input id="cloud-enable" type="checkbox" name="ckan.cloud_storage_enable" value="1" {{ 'checked' if enabled_s3!='False' else '' }}>
+      <label class="col-toggle-label" for="cloud-enable">
+        <div class="col-toggle-inner">
+        </div>
+        <div class="col-toggle-switch ">
+        </div>
+      </label>
     </div>
-  </form>
+    <p class="controls"><em>Currently only S3 Amazon is available</em></p>
+    <label for="upload-failower" class="control-label">Failover</label>
+    <fieldset id="upload-failower" class="controls">
+      <input type="radio" id="upload-failowers-local" name="ckan.cloud_failover" value=1 {{ 'checked' if failover_s3 == '1' }}></radio>
+      <label for="upload-failowers-local" class="without-colon inline-radio-label">Write upload to local</label>
+      <br>
+      <input type="radio" id="upload-failower-abort" name="ckan.cloud_failover" value=2 {{ 'checked' if failover_s3 == '2' }}></radio>
+      <label for="upload-failower-abort" class="without-colon inline-radio-label">Abort upload</label>
+    </fieldset>
+  </fieldset>
+  <br>
+  <fieldset>
+    <legend>AWS S3 settings</legend>
+    {{ form.input('ckan.s3_aws_key', label=_('AWS Access Key'), value=data['ckan.s3_aws_key'], attrs={'class':'disablable'}) }}
+    {{ form.input('ckan.s3_secret_key', label=_('AWS Secret Key'), value=data['ckan.s3_secret_key'], attrs={'class':'disablable'}) }}
+  </fieldset>
+  {% endblock %}
+  <div class="form-actions">
+    {#
+    {% set locale = h.dump_json({'content': _('Are you sure you want to reset the config?')}) %}
+    <a href="{% url_for controller='admin', action='reset_config' %}" class="btn btn-danger pull-left" data-module="confirm-action" data-module-i18n="{{ locale }}">{{ _('Reset') }}</a>
+    #}
+    {% set locale = h.dump_json({'content': _('Are you sure you want to reset the config?')}) %}
+    <a href="{% url_for controller='ckanext.s3con.s3.controller:S3Controller', action='reset_config' %}" class="btn btn-danger pull-left" data-module="confirm-action" data-module-i18n="{{ locale }}">{{ _('Reset') }}</a>
+    <button type="submit" class="btn btn-primary" name="save">{{ _('Update Config') }}</button>
+  </div>
+</form>
 {% endblock %}
 
 {% block secondary_content %}
-  <div class="module module-narrow module-shallow">
-    <h2 class="module-heading">
-      <i class="icon-info-sign"></i>
-      {{ _('CKAN Cloud Connector config options') }}
-    </h2>
-    <div class="module-content">
-      {% block admin_form_help %}
-      {% set about_url = h.url_for(controller='home', action='about') %}
-      {% set home_url = h.url_for(controller='home', action='index') %}
-      {% set docs_url = "http://docs.ckan.org/en/{0}/theming.html".format(g.ckan_doc_version) %}
-      {% trans %}
-        <p><strong>Site Title:</strong> This is the title of this CKAN instance
-          It appears in various places throughout CKAN.</p>
-        <p><strong>Style:</strong> Choose from a list of simple variations of
-          the main colour scheme to get a very quick custom theme working.</p>
-        <p><strong>Site Tag Logo:</strong> This is the logo that appears in the
-          header of all the CKAN instance templates.</p>
-      {% endtrans %}
-      {% endblock %}
-    </div>
+<div class="module module-narrow module-shallow">
+  <h2 class="module-heading">
+    <i class="icon-info-sign"></i>
+    {{ _('CKAN Cloud Connector config options') }}
+  </h2>
+  <div class="module-content">
+    {% block admin_form_help %}
+    {% trans %}
+    <p><strong>Cloud: </strong>Once the S3 cloud connector is enabled all future assets will be stored in S3 using the specificed access and secret key.</p>
+    <p><strong>Failover: </strong>The failover options define how the cloud connector will behave when there is a problem with pushing a file into S3. It can either just store it locally or abort the upload and show an error message.</p>
+    <p>In this version of the cloud connector only Amazon S3 storage is supported and there is no migration of local assets to S3 when enabled.</p>
+    {% endtrans %}
+    {% endblock %}
   </div>
+</div>
 {% endblock %}

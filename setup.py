@@ -14,7 +14,7 @@ setup(
     author='Sergey Motornyuk',
     author_email='sergey.motornyuk@linkdigital.com.au',
     url='',
-    license='',
+    license='AGPL V3',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     namespace_packages=['ckanext', 'ckanext.s3con'],
     include_package_data=True,

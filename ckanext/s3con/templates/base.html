@@ -1,0 +1,13 @@
+{% ckan_extends %}
+
+{% block styles %}
+  {{ super() }}
+  {% resource 's3con/styles/s3con.css' %}
+{% endblock %}
+
+
+
+{% block scripts %}
+  {{ super() }}
+  {% resource 's3con/scripts/s3con_form_disabler.js' %}
+{% endblock %}
