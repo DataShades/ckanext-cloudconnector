@@ -1,12 +1,12 @@
 # CKAN CloudConnector
 
-A package of extensions for the [CKAN open data platform](http://ckan.org/) for storing resources on CloudStorage.
+A package of extensions for [CKAN open data platform](http://ckan.org/) for storing resources on CloudStorage.
 
 ## Requirements
 
 This extension was developed and tested under CKAN-2.2
 
-For now extension supports just Amazon S3 Cloud storage. In order to use this extension you should have AWS account because AWS Key and AWS Secret Key are used during connection to Cloud
+For now extension supports only Amazon S3 Cloud storage. In order to use this extension you should have AWS account because AWS Key and AWS Secret Key are required for connection to Cloud.
 
 ## Installation
 
@@ -14,19 +14,21 @@ To install CKAN CloudConnector:
 
 1. Activate your CKAN virtual environment, for example:
 
-     . /usr/lib/ckan/default/bin/activate
+     `$ . /usr/lib/ckan/default/bin/activate`
 
 2. Install the ckanext-s3con Python package into your virtual environment:
 
+     ```
+     $ cd /some/dir/ckan-s3con
      $ python setup.py install
-
+     ```
 3. Add ``s3con`` to the ``ckan.plugins`` setting in your CKAN
    config file (by default the config file is located at
    ``/etc/ckan/default/production.ini``).
 
 4. Restart CKAN. For example if you've deployed CKAN with Apache on Ubuntu:
 
-     $ sudo service apache2 reload
+     `$ sudo service apache2 reload `
 
 ## Config Settings
 This extension defines additional settings in config file
@@ -43,6 +45,7 @@ This configs aren't required and can be setted or changed under the 'Cloud conne
 To install CKAN CloudConnector for development, activate your CKAN virtualenv and
 do:
 
+     $ cd /some/dir/ckan-s3con
      $ python setup.py develop
      
 All dependencies will be installed automatically 
