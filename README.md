@@ -19,7 +19,7 @@ To install CKAN CloudConnector:
 2. Install the ckanext-s3con Python package into your virtual environment:
 
      ```
-     $ cd /some/dir/ckan-s3con
+     $ cd /some/dir/ckanext-s3con
      $ python setup.py install
      ```
 3. Add ``s3con`` to the ``ckan.plugins`` setting in your CKAN
@@ -45,7 +45,7 @@ This configs aren't required and can be setted or changed under the 'Cloud conne
 To install CKAN CloudConnector for development, activate your CKAN virtualenv and
 do:
 
-     $ cd /some/dir/ckan-s3con
+     $ cd /some/dir/ckanext-s3con
      $ python setup.py develop
      
 All dependencies will be installed automatically 
