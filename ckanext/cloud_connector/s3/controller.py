@@ -17,7 +17,7 @@ session = model.Session
 import logging
 log = logging.getLogger(__name__)
 
-from ckanext.s3con.s3.uploader import s3_option_items
+from ckanext.cloud_connector.s3.uploader import s3_option_items
 
 class S3Controller(base.BaseController):
 
@@ -29,7 +29,7 @@ class S3Controller(base.BaseController):
         if item in data:
           app_globals.set_global(item, data[item])
       app_globals.reset()
-      h.redirect_to(controller='ckanext.s3con.s3.controller:S3Controller', action='config')
+      h.redirect_to(controller='ckanext.cloud_connector.s3.controller:S3Controller', action='config')
 
     data = {}
     for item in s3_option_items:
@@ -41,7 +41,7 @@ class S3Controller(base.BaseController):
 
   def reset_config(self):
     if 'cancel' in request.params:
-      h.redirect_to(controller='ckanext.s3con.s3.controller:S3Controller', action='config')
+      h.redirect_to(controller='ckanext.cloud_connector.s3.controller:S3Controller', action='config')
 
     if request.method == 'POST':
       # remove sys info items
@@ -51,4 +51,4 @@ class S3Controller(base.BaseController):
       app_globals.reset()
     
 
-    h.redirect_to(controller='ckanext.s3con.s3.controller:S3Controller', action='config')
+    h.redirect_to(controller='ckanext.cloud_connector.s3.controller:S3Controller', action='config')

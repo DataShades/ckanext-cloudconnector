@@ -1,0 +1,13 @@
+{% ckan_extends %}
+
+{% block styles %}
+  {{ super() }}
+  {% resource 'cloud_connector/styles/cloud_connector.css' %}
+{% endblock %}
+
+
+
+{% block scripts %}
+  {{ super() }}
+  {% resource 'cloud_connector/scripts/cloud_connector_form_disabler.js' %}
+{% endblock %}
