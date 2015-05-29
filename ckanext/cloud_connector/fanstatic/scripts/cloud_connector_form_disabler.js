@@ -1,5 +1,5 @@
 "use strict";
-ckan.module('s3con-form-disabler', function ($, _){
+ckan.module('cloudconnector-form-disabler', function ($, _){
   return{
     initialize: function (){
       $.proxyAll(this, /_on/);
@@ -11,7 +11,7 @@ ckan.module('s3con-form-disabler', function ($, _){
 
     _onChangeState: function(e){
       var checked = this.switcher.checked;
-  
+
       if (checked){
         $('.disablable').attr('readonly', false);
       } else {

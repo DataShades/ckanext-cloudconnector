@@ -3,7 +3,7 @@ import ckan.plugins.toolkit as toolkit
 
 from pylons import config
 
-import ckanext.s3con.action as action
+import ckanext.cloud_connector.action as action
 import ckan.model as model
 import logging
 log = logging.getLogger(__name__)

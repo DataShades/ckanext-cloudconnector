@@ -8,13 +8,13 @@
 {% resource 'cloud_connector/scripts/cloud_connector_checkbox_switcher.js' %}
 {% endblock %}
 {% block primary_content_inner %}
-<form method='post' action="" class="form-horizontal" data-module="s3con-form-disabler">
+<form method='post' action="" class="form-horizontal" data-module="cloudconnector-form-disabler">
   {% block admin_form %}
   <fieldset>
     <legend>Cloud settings</legend>
     <input type="hidden" name="ckan.cloud_storage_enable" value='False'>
-    <label for="" class="control-label">Cloud</label> 
-    <div class="col-toggle {{ 'active' if enabled_s3!='False' else '' }}" data-module="s3con-checkbox-switcher">
+    <label for="" class="control-label">Cloud</label>
+    <div class="col-toggle {{ 'active' if enabled_s3!='False' else '' }}" data-module="cloudconnector-checkbox-switcher">
       <input id="cloud-enable" type="checkbox" name="ckan.cloud_storage_enable" value="1" {{ 'checked' if enabled_s3!='False' else '' }}>
       <label class="col-toggle-label" for="cloud-enable">
         <div class="col-toggle-inner">

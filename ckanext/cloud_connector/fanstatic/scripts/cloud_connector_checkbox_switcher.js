@@ -1,6 +1,6 @@
 "use strict";
 
-ckan.module('s3con-checkbox-switcher', function ($, _) {
+ckan.module('cloudconnector-checkbox-switcher', function ($, _) {
   return {
     initialize: function(){
       $.proxyAll(this, /_on/);
@@ -19,6 +19,6 @@ ckan.module('s3con-checkbox-switcher', function ($, _) {
         that.parent().removeClass("active");
       }
     },
-    
+
   }
 });
