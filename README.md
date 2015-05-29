@@ -22,7 +22,7 @@ To install CKAN CloudConnector:
      $ cd /some/dir/ckanext-cloudconnector
      $ python setup.py install
      ```
-3. Add ``s3con`` to the ``ckan.plugins`` setting in your CKAN
+3. Add ``cloud_connector`` to the ``ckan.plugins`` setting in your CKAN
    config file (by default the config file is located at
    ``/etc/ckan/default/production.ini``).
 
@@ -47,8 +47,8 @@ do:
 
      $ cd /some/dir/ckanext-cloudconnector
      $ python setup.py develop
-     
-All dependencies will be installed automatically 
+
+All dependencies will be installed automatically
 
 ## Copying and License
 
