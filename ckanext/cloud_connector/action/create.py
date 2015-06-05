@@ -1,11 +1,9 @@
-import ckan.model as model
 from pylons import config
 import ckan.logic.action.create as origin
 import ckanext.cloud_connector.s3.uploader as uploader
 import ckan.plugins.toolkit as tk
 
 from ckan.logic import (
-  NotFound,
   ValidationError,
   get_or_bust as _get_or_bust,
   check_access as _check_access,
@@ -17,12 +15,14 @@ log = logging.getLogger(__name__)
 
 __all__ = ['resource_create']
 
+
 def resource_create(context, data_dict):
-  if not tk.asbool(config.get('ckan.cloud_storage_enable')) or data_dict.get('url'):
+  if not tk.asbool(config.get(
+    'ckan.cloud_storage_enable')) or data_dict.get('url'):
+
     return origin.resource_create(context, data_dict)
-  
+
   model = context['model']
-  user = context['user']
 
   package_id = _get_or_bust(data_dict, 'package_id')
   data_dict.pop('package_id')
@@ -49,8 +49,10 @@ def resource_create(context, data_dict):
 
   ## Get out resource_id resource from model as it will not appear in
   ## package_show until after commit
-  s3_link = upload.upload(context['package'].resources[-1].id,
-                uploader.get_max_resource_size())
+  s3_link = upload.upload(
+    context['package'].resources[-1].id,
+    uploader.get_max_resource_size()
+    )
 
   if s3_link:
     pkg_dict['resources'][-1]['url_type'] = ''

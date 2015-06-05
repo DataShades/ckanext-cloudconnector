@@ -7,22 +7,16 @@
 {{ super() }}
 {% resource 'cloud_connector/scripts/cloud_connector_checkbox_switcher.js' %}
 {% endblock %}
+
 {% block primary_content_inner %}
 <form method='post' action="" class="form-horizontal" data-module="cloudconnector-form-disabler">
+  {{ form.errors(error_summary) }}
   {% block admin_form %}
   <fieldset>
     <legend>Cloud settings</legend>
     <input type="hidden" name="ckan.cloud_storage_enable" value='False'>
     <label for="" class="control-label">Cloud</label>
-    <div class="col-toggle {{ 'active' if enabled_s3!='False' else '' }}" data-module="cloudconnector-checkbox-switcher">
       <input id="cloud-enable" type="checkbox" name="ckan.cloud_storage_enable" value="1" {{ 'checked' if enabled_s3!='False' else '' }}>
-      <label class="col-toggle-label" for="cloud-enable">
-        <div class="col-toggle-inner">
-        </div>
-        <div class="col-toggle-switch ">
-        </div>
-      </label>
-    </div>
     <p class="controls"><em>Currently only S3 Amazon is available</em></p>
     <label for="upload-failower" class="control-label">Failover</label>
     <fieldset id="upload-failower" class="controls">
@@ -36,8 +30,14 @@
   <br>
   <fieldset>
     <legend>AWS S3 settings</legend>
-    {{ form.input('ckan.s3_aws_key', label=_('AWS Access Key'), value=data['ckan.s3_aws_key'], attrs={'class':'disablable'}) }}
-    {{ form.input('ckan.s3_secret_key', label=_('AWS Secret Key'), value=data['ckan.s3_secret_key'], attrs={'class':'disablable'}) }}
+    {{ form.input('ckan.s3_aws_key', label=_('AWS Access Key'),
+      value=data['ckan.s3_aws_key'],
+      error=errors['ckan.s3_aws_key'],
+      attrs={'class':'disablable'}) }}
+    {{ form.input('ckan.s3_secret_key', label=_('AWS Secret Key'),
+      value=data['ckan.s3_secret_key'],
+      error=errors['ckan.s3_secret_key'],
+      attrs={'class':'disablable'}) }}
   </fieldset>
   {% endblock %}
   <div class="form-actions">

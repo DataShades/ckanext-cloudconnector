@@ -1,12 +1,11 @@
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 
-from pylons import config
 
 import ckanext.cloud_connector.action as action
-import ckan.model as model
 import logging
 log = logging.getLogger(__name__)
+
 
 class S3Plugin(plugins.SingletonPlugin):
   plugins.implements(plugins.IActions)
@@ -29,10 +28,8 @@ class S3Plugin(plugins.SingletonPlugin):
       controller='ckanext.cloud_connector.s3.controller:S3Controller',
       action='config', ckan_icon='cloud')
     map.connect(
-      'cloud_connector_config_reset', '/ckan-admin/cloud_connector_config_reset',
+      'cloud_connector_config_reset',
+      '/ckan-admin/cloud_connector_config_reset',
       controller='ckanext.cloud_connector.s3.controller:S3Controller',
       action='reset_config')
     return map
-
-
-

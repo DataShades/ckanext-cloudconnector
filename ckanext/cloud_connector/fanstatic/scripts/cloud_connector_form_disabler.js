@@ -13,9 +13,9 @@ ckan.module('cloudconnector-form-disabler', function ($, _){
       var checked = this.switcher.checked;
 
       if (checked){
-        $('.disablable').attr('readonly', false);
+        $('.disablable').attr('disabled', false);
       } else {
-        $('.disablable').attr('readonly', true);
+        $('.disablable').attr('disabled', true);
       }
     },
 

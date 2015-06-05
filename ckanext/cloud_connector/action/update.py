@@ -1,4 +1,3 @@
-import ckan.model as cmodel
 from pylons import config
 import ckan.logic.action.update as origin
 import ckanext.cloud_connector.s3.uploader as uploader
@@ -12,7 +11,7 @@ from ckan.logic import (
   check_access as _check_access,
   get_action as _get_action,
 )
-
+from ckan.common import _
 import logging
 log = logging.getLogger(__name__)
 
@@ -20,11 +19,12 @@ __all__ = ['resource_update']
 
 
 def resource_update(context, data_dict):
-  if not tk.asbool(config.get('ckan.cloud_storage_enable')) or data_dict.get('url'):
+  if not tk.asbool(
+    config.get('ckan.cloud_storage_enable')) or data_dict.get('url'):
+
     return origin.resource_update(context, data_dict)
 
   model = context['model']
-  user = context['user']
   id = _get_or_bust(data_dict, "id")
 
   resource = model.Resource.get(id)
