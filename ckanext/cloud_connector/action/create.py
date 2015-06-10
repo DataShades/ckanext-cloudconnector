@@ -1,6 +1,6 @@
 from pylons import config
 import ckan.logic.action.create as origin
-import ckanext.cloud_connector.s3.uploader as uploader
+import ckanext.cloud_connector.controllers.uploader as uploader
 import ckan.lib.uploader as origin_uploader
 import ckan.plugins.toolkit as tk
 

@@ -25,11 +25,11 @@ class S3Plugin(plugins.SingletonPlugin):
   def before_map(self, map):
     map.connect(
       'cloud_connector_config', '/ckan-admin/cloud_connector_config',
-      controller='ckanext.cloud_connector.s3.controller:S3Controller',
+      controller='ckanext.cloud_connector.controllers.controller:S3Controller',
       action='config', ckan_icon='cloud')
     map.connect(
       'cloud_connector_config_reset',
       '/ckan-admin/cloud_connector_config_reset',
-      controller='ckanext.cloud_connector.s3.controller:S3Controller',
+      controller='ckanext.cloud_connector.controllers.controller:S3Controller',
       action='reset_config')
     return map

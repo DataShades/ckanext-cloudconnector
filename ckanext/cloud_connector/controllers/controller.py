@@ -12,7 +12,7 @@ session = model.Session
 import logging
 log = logging.getLogger(__name__)
 
-from ckanext.cloud_connector.s3.uploader import s3_option_items
+from ckanext.cloud_connector.controllers.uploader import s3_option_items
 
 import ckanext.cloud_connector.action.schema as schema
 from ckan.lib.navl.dictization_functions import validate
@@ -30,7 +30,7 @@ def _update_config(data):
         app_globals.set_global(item, data[item])
     app_globals.reset()
     h.redirect_to(
-      controller='ckanext.cloud_connector.s3.controller:S3Controller',
+      controller='ckanext.cloud_connector.controllers.controller:S3Controller',
       action='config')
 
   data = {}
@@ -63,7 +63,8 @@ class S3Controller(base.BaseController):
   def reset_config(self):
     if 'cancel' in request.params:
       h.redirect_to(
-        controller='ckanext.cloud_connector.s3.controller:S3Controller',
+       controller=
+        'ckanext.cloud_connector.controllers.controller:S3Controller',
         action='config')
 
     if request.method == 'POST':
@@ -74,5 +75,5 @@ class S3Controller(base.BaseController):
       app_globals.reset()
 
     h.redirect_to(
-      controller='ckanext.cloud_connector.s3.controller:S3Controller',
+      controller='ckanext.cloud_connector.controllers.controller:S3Controller',
       action='config')
