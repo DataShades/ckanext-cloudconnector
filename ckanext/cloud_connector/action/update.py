@@ -1,6 +1,7 @@
 from pylons import config
 import ckan.logic.action.update as origin
 import ckanext.cloud_connector.s3.uploader as uploader
+import ckan.lib.uploader as origin_uploader
 import ckan.plugins.toolkit as tk
 
 
@@ -19,10 +20,8 @@ __all__ = ['resource_update']
 
 
 def resource_update(context, data_dict):
-  if not tk.asbool(
-    config.get('ckan.cloud_storage_enable')) or data_dict.get('url'):
-
-    return origin.resource_update(context, data_dict)
+  use_origin = not tk.asbool(config.get(
+    'ckan.cloud_storage_enable')) or data_dict.get('url')
 
   model = context['model']
   id = _get_or_bust(data_dict, "id")
@@ -47,7 +46,8 @@ def resource_update(context, data_dict):
     log.error('Could not find resource ' + id)
     raise NotFound(_('Resource was not found.'))
 
-  upload = uploader.S3Upload(data_dict)
+  upload = origin_uploader.ResourceUpload(data_dict) if use_origin \
+      else uploader.S3Upload(data_dict)
 
   pkg_dict['resources'][n] = data_dict
 
@@ -60,7 +60,7 @@ def resource_update(context, data_dict):
     errors = e.error_dict['resources'][n]
     raise ValidationError(errors)
 
-  s3_link = upload.upload(id, uploader.get_max_resource_size())
+  s3_link = upload.upload(id, origin_uploader.get_max_resource_size())
   if s3_link:
     pkg_dict['resources'][n]['url_type'] = ''
     pkg_dict['resources'][n]['url'] = 'https://s3.amazonaws.com/' + s3_link
@@ -68,6 +68,5 @@ def resource_update(context, data_dict):
 
   model.repo.commit()
   return _get_action('resource_show')(context, {'id': id})
-
 
 resource_update.__doc__ = origin.resource_update.__doc__

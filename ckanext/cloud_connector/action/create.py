@@ -1,6 +1,7 @@
 from pylons import config
 import ckan.logic.action.create as origin
 import ckanext.cloud_connector.s3.uploader as uploader
+import ckan.lib.uploader as origin_uploader
 import ckan.plugins.toolkit as tk
 
 from ckan.logic import (
@@ -17,10 +18,8 @@ __all__ = ['resource_create']
 
 
 def resource_create(context, data_dict):
-  if not tk.asbool(config.get(
-    'ckan.cloud_storage_enable')) or data_dict.get('url'):
-
-    return origin.resource_create(context, data_dict)
+  use_origin = not tk.asbool(config.get(
+    'ckan.cloud_storage_enable')) or data_dict.get('url')
 
   model = context['model']
 
@@ -34,24 +33,23 @@ def resource_create(context, data_dict):
   if not 'resources' in pkg_dict:
     pkg_dict['resources'] = []
 
-  upload = uploader.S3Upload(data_dict)
+  upload = origin_uploader.ResourceUpload(data_dict) if use_origin \
+      else uploader.S3Upload(data_dict)
 
   pkg_dict['resources'].append(data_dict)
 
   try:
-    context['defer_commit'] = True
-    context['use_cache'] = False
-    _get_action('package_update')(context, pkg_dict)
-    context.pop('defer_commit')
+      context['defer_commit'] = True
+      context['use_cache'] = False
+      _get_action('package_update')(context, pkg_dict)
+      context.pop('defer_commit')
   except ValidationError, e:
-    errors = e.error_dict['resources'][-1]
-    raise ValidationError(errors)
+      errors = e.error_dict['resources'][-1]
+      raise ValidationError(errors)
 
-  ## Get out resource_id resource from model as it will not appear in
-  ## package_show until after commit
   s3_link = upload.upload(
     context['package'].resources[-1].id,
-    uploader.get_max_resource_size()
+    origin_uploader.get_max_resource_size()
     )
 
   if s3_link:
