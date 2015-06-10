@@ -12,7 +12,9 @@ session = model.Session
 import logging
 log = logging.getLogger(__name__)
 
-from ckanext.cloud_connector.controllers.uploader import s3_option_items
+from ckanext.cloud_connector.controllers.uploader import (
+  additional_config,
+  get_uploaders)
 
 import ckanext.cloud_connector.action.schema as schema
 from ckan.lib.navl.dictization_functions import validate
@@ -25,7 +27,7 @@ def _update_config(data):
     if errors:
       raise ValidationError(errors)
 
-    for item in s3_option_items:
+    for item in additional_config:
       if item in data:
         app_globals.set_global(item, data[item])
     app_globals.reset()
@@ -34,7 +36,7 @@ def _update_config(data):
       action='config')
 
   data = {}
-  for item in s3_option_items:
+  for item in additional_config:
     data[item] = config.get(item)
   return data
 
@@ -50,13 +52,18 @@ class S3Controller(base.BaseController):
     except ValidationError, e:
       errors = e.error_dict
       error_summary = e.error_summary
-    log.warn(dir(errors))
+
+    implemented_connectors = get_uploaders()
+    conn_markdown = [{'value': item[0], 'text': item[1]['title']}
+                     for item in implemented_connectors.items()]
 
     vars = {
       'data': data,
       'errors': errors,
-      'form_items': s3_option_items,
-      'error_summary': error_summary
+      'form_items': additional_config,
+      'error_summary': error_summary,
+      'implemented_connectors': implemented_connectors,
+      'conn_markdown': conn_markdown
       }
     return base.render('admin/cloud_connector_config.html', extra_vars=vars)
 
@@ -69,7 +76,7 @@ class S3Controller(base.BaseController):
 
     if request.method == 'POST':
       # remove sys info items
-      for item in s3_option_items:
+      for item in additional_config:
         app_globals.delete_global(item)
       # reset to values in config
       app_globals.reset()

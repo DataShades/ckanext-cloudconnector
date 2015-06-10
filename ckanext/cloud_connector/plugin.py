@@ -6,6 +6,9 @@ import ckanext.cloud_connector.action as action
 import logging
 log = logging.getLogger(__name__)
 
+import ckanext.cloud_connector.controllers.s3
+import ckanext.cloud_connector.controllers.azure
+
 
 class S3Plugin(plugins.SingletonPlugin):
   plugins.implements(plugins.IActions)

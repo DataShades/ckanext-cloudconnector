@@ -13,3 +13,11 @@
   width: 25px;
   height: 25px;
 }
+
+.provider-fieldset{
+  display: none;
+}
+
+.provider-fieldset.active{
+  display: block;
+}

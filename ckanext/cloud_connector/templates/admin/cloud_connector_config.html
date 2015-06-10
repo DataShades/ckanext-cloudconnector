@@ -1,6 +1,7 @@
 {% set enabled_s3 = data['ckan.cloud_storage_enable'] %}
 {% set failover_s3 = data['ckan.cloud_failover'] %}
 {% import 'macros/form.html' as form %}
+{% import 'macros/autoform.html' as autoform %}
 
 {% extends "admin/base.html" %}
 {% block scripts %}
@@ -18,6 +19,7 @@
     <label for="" class="control-label">Cloud</label>
       <input id="cloud-enable" type="checkbox" name="ckan.cloud_storage_enable" value="1" {{ 'checked' if enabled_s3!='False' else '' }}>
     <p class="controls"><em>Currently only S3 Amazon is available</em></p>
+    {{ form.select('ckan.cloud_storage_provider', label=_('Service provider'), id='cloud-storage-provider', options=conn_markdown, selected=data['ckan.cloud_storage_provider'] ) }}
     <label for="upload-failower" class="control-label">Failover</label>
     <fieldset id="upload-failower" class="controls">
       <input type="radio" id="upload-failowers-local" name="ckan.cloud_failover" value=1 {{ 'checked' if failover_s3 == '1' }}></radio>
@@ -28,17 +30,19 @@
     </fieldset>
   </fieldset>
   <br>
-  <fieldset>
-    <legend>AWS S3 settings</legend>
-    {{ form.input('ckan.s3_aws_key', label=_('AWS Access Key'),
-      value=data['ckan.s3_aws_key'],
-      error=errors['ckan.s3_aws_key'],
-      attrs={'class':'disablable'}) }}
-    {{ form.input('ckan.s3_secret_key', label=_('AWS Secret Key'),
-      value=data['ckan.s3_secret_key'],
-      error=errors['ckan.s3_secret_key'],
-      attrs={'class':'disablable'}) }}
-  </fieldset>
+  {% for (key, value) in implemented_connectors.items() %}
+
+    <fieldset id="fieldset-{{ key }}" class="provider-fieldset {% if data['ckan.cloud_storage_provider'] == key %}active{% endif %}">
+      <legend>{{ value.title }} {{ _('settings') }}</legend>
+        {% for input in value.markdown %}
+          {{ form.input(input.name, label=input.label,
+            value=data.get(input.name),
+            error=errors.get(input.name),
+            attrs={'class':input.classes, 'disabled': 'disabled'}) }}
+        {% endfor %}
+    </fieldset>
+
+  {% endfor %}
   {% endblock %}
   <div class="form-actions">
     {#

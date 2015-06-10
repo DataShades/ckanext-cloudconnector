@@ -47,7 +47,7 @@ def resource_update(context, data_dict):
     raise NotFound(_('Resource was not found.'))
 
   upload = origin_uploader.ResourceUpload(data_dict) if use_origin \
-      else uploader.S3Upload(data_dict)
+      else uploader.make_uploader(data_dict)
 
   pkg_dict['resources'][n] = data_dict
 
@@ -60,10 +60,10 @@ def resource_update(context, data_dict):
     errors = e.error_dict['resources'][n]
     raise ValidationError(errors)
 
-  s3_link = upload.upload(id, origin_uploader.get_max_resource_size())
-  if s3_link:
+  cloud_link = upload.upload(id, origin_uploader.get_max_resource_size())
+  if cloud_link:
     pkg_dict['resources'][n]['url_type'] = ''
-    pkg_dict['resources'][n]['url'] = 'https://s3.amazonaws.com/' + s3_link
+    pkg_dict['resources'][n]['url'] = cloud_link
     _get_action('package_update')(context, pkg_dict)
 
   model.repo.commit()
