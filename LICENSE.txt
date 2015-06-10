@@ -1,4 +1,4 @@
-CKAN Galleries
+CKAN CloudConnector
 
 Copyright (C) 2015 Link Web Services Pty Ltd
 
