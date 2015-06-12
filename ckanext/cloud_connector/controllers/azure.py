@@ -37,13 +37,13 @@ markdown = [
     'control': 'input',
     'label': 'Azure Key',
     'placeholder': 'Microsoft Azure Access Key',
-    'classes': 'disablable'},
+    'classes': 'disablable required-for-testing'},
   {
     'name': 'ckan.azure_secret_key',
     'control': 'input',
     'label': 'Azure Secret Key',
     'placeholder': 'Microsoft Azure Secret Key',
-    'classes': 'disablable'},
+    'classes': 'disablable required-for-testing'},
 ]
 
 

@@ -1,11 +1,13 @@
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
+from boto import connect_s3
 import pylons
 from md5 import md5
 import ckan.lib.navl.validators as v
 from ckanext.cloud_connector.controllers.uploader import (
   AbstractConnectorUpload,
   add_storage_globals)
+import boto.exception as exception
 
 from ckanext.cloud_connector.action.schema import (
   default_cloud_connector_schema_update)
@@ -35,13 +37,13 @@ markdown = [
     'control': 'input',
     'label': 'AWS Access Key',
     'placeholder': 'AWS Access Key',
-    'classes': 'disablable'},
+    'classes': 'disablable required-for-testing'},
   {
     'name': 'ckan.s3_secret_key',
     'control': 'input',
     'label': 'AWS Secret Key',
     'placeholder': 'AWS Secret Key',
-    'classes': 'disablable'},
+    'classes': 'disablable required-for-testing'},
 ]
 
 
@@ -110,3 +112,19 @@ class S3Upload(AbstractConnectorUpload):
       return self.cloud_base_link + self.bucket_name + '/' + filepath
     except Exception, e:
       log.warn(e)
+
+  @staticmethod
+  def test_config(data):
+    try:
+      test_bucket = bucket_postfix + 'test_connection'
+      connect_s3(*data).create_bucket(test_bucket).delete()
+      result = {
+        'status': 'success',
+        'message': 'OK',
+      }
+    except exception.BotoServerError, e:
+      result = {
+        'status': 'failed',
+        'message': e.message
+      }
+    return result

@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block primary_content_inner %}
-<form method='post' action="" class="form-horizontal" data-module="cloudconnector-form-disabler">
+<form method='post' action="" class="form-horizontal" data-module="cloudconnector-form-disabler" data-module-test-url="{% url_for controller='ckanext.cloud_connector.controllers.controller:CCController', action='test_config' %}">
   {{ form.errors(error_summary) }}
   {% block admin_form %}
   <fieldset>
@@ -35,11 +35,12 @@
     <fieldset id="fieldset-{{ key }}" class="provider-fieldset {% if data['ckan.cloud_storage_provider'] == key %}active{% endif %}">
       <legend>{{ value.title }} {{ _('settings') }}</legend>
         {% for input in value.markdown %}
-          {{ form.input(input.name, label=input.label,
+          {{ form[input.control](input.name, label=input.label,
             value=data.get(input.name),
             error=errors.get(input.name),
             attrs={'class':input.classes, 'disabled': 'disabled'}) }}
         {% endfor %}
+        <button type="button" class="btn btn-primary pull-right test-providers-conf" name="test">{{ _('Test Config') }}</button>
     </fieldset>
 
   {% endfor %}
@@ -50,7 +51,7 @@
     <a href="{% url_for controller='admin', action='reset_config' %}" class="btn btn-danger pull-left" data-module="confirm-action" data-module-i18n="{{ locale }}">{{ _('Reset') }}</a>
     #}
     {% set locale = h.dump_json({'content': _('Are you sure you want to reset the config?')}) %}
-    <a href="{% url_for controller='ckanext.cloud_connector.controllers.controller:S3Controller', action='reset_config' %}" class="btn btn-danger pull-left" data-module="confirm-action" data-module-i18n="{{ locale }}">{{ _('Reset') }}</a>
+    <a href="{% url_for controller='ckanext.cloud_connector.controllers.controller:CCController', action='reset_config' %}" class="btn btn-danger pull-left" data-module="confirm-action" data-module-i18n="{{ locale }}">{{ _('Reset') }}</a>
     <button type="submit" class="btn btn-primary" name="save">{{ _('Update Config') }}</button>
   </div>
 </form>

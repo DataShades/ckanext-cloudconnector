@@ -19,6 +19,8 @@ from ckanext.cloud_connector.controllers.uploader import (
 import ckanext.cloud_connector.action.schema as schema
 from ckan.lib.navl.dictization_functions import validate
 from ckan.logic import ValidationError
+import ckanext.cloud_connector.controllers.uploader as uploader
+from pylons.decorators import jsonify
 
 
 def _update_config(data):
@@ -32,7 +34,7 @@ def _update_config(data):
         app_globals.set_global(item, data[item])
     app_globals.reset()
     h.redirect_to(
-      controller='ckanext.cloud_connector.controllers.controller:S3Controller',
+      controller='ckanext.cloud_connector.controllers.controller:CCController',
       action='config')
 
   data = {}
@@ -41,7 +43,7 @@ def _update_config(data):
   return data
 
 
-class S3Controller(base.BaseController):
+class CCController(base.BaseController):
 
   def config(self):
     data = dict([x for x in request.POST.items()])
@@ -71,7 +73,7 @@ class S3Controller(base.BaseController):
     if 'cancel' in request.params:
       h.redirect_to(
        controller=
-        'ckanext.cloud_connector.controllers.controller:S3Controller',
+        'ckanext.cloud_connector.controllers.controller:CCController',
         action='config')
 
     if request.method == 'POST':
@@ -82,5 +84,13 @@ class S3Controller(base.BaseController):
       app_globals.reset()
 
     h.redirect_to(
-      controller='ckanext.cloud_connector.controllers.controller:S3Controller',
+      controller='ckanext.cloud_connector.controllers.controller:CCController',
       action='config')
+
+  @jsonify
+  def test_config(self):
+    result = uploader.test_config(
+      request.params['provider'],
+      request.params.getall('values[]'))
+
+    return result

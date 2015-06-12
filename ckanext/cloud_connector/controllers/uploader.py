@@ -37,20 +37,32 @@ def get_uploaders():
   return uploaders
 
 
-def make_uploader(data_dict):
+def get_current_uploader(provider=None):
   uploaders = get_uploaders()
-  uploader = uploaders[
-    config.get('ckan.cloud_storage_provider')
-    ]['class'](data_dict)
+  if provider is None:
+    provider = config.get('ckan.cloud_storage_provider')
+  uploader = uploaders[provider]['class']
 
   return uploader
+
+
+def make_uploader(data_dict):
+  uploader = get_current_uploader()(data_dict)
+
+  return uploader
+
+
+def test_config(provider, data):
+  return get_current_uploader(provider).test_config(data)
 
 
 class AbstractConnectorUpload(ResourceUpload):
 
   cloud_base_link = None
 
-  __friendly_name__ = 'Abstract and not implemented'
+  @classmethod
+  def __friendly_info__(cls):
+    raise NameError('Abstract method not implemented')
 
   def __init__(self, resource):
     uploaded_file = resource.get('upload')
@@ -67,3 +79,11 @@ class AbstractConnectorUpload(ResourceUpload):
       return super(AbstractConnectorUpload, self).upload(id, max_size)
     elif self.failover == '2':
       abort('404', 'Problem with cloud')
+
+  @staticmethod
+  def test_config(data):
+    result = {
+      'status': 'failed',
+      'message': 'Test not implemented'
+    }
+    return result
