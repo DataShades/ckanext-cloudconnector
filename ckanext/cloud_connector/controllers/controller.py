@@ -33,9 +33,16 @@ def _update_config(data):
 
     items = map(lambda i: (i, data[i]),
                 filter(lambda x: x in data, additional_config))
-
-    data = logic.get_action('config_option_update')(
+    try:
+      data = logic.get_action('config_option_update')(
               {'user': c.user}, dict(items))
+    # <2.4
+    except KeyError:
+      for item in additional_config:
+        if item in data:
+          app_globals.set_global(item, data[item])
+        app_globals.reset()
+
     h.redirect_to(
       controller='ckanext.cloud_connector.controllers.controller:CCController',
       action='config')

@@ -17,7 +17,9 @@ s3_option_items = {
 
 def add_storage_globals(options):
   additional_config.update(options)
-  app_globals.app_globals_from_config_details.update(options)
+  # CKAN 2.4
+  if hasattr(app_globals, 'app_globals_from_config_details'):
+    app_globals.app_globals_from_config_details.update(options)
 
 add_storage_globals(s3_option_items)
 
