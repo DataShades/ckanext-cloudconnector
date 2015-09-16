@@ -1,5 +1,5 @@
-{% set enabled_s3 = data['ckan.cloud_storage_enable'] %}
-{% set failover_s3 = data['ckan.cloud_failover'] %}
+{% set enabled_storage = data['ckan.cloud_storage_enable'] %}
+{% set failover_handler = data['ckan.cloud_failover'] %}
 {% import 'macros/form.html' as form %}
 {% import 'macros/autoform.html' as autoform %}
 
@@ -17,15 +17,15 @@
     <legend>Cloud settings</legend>
     <input type="hidden" name="ckan.cloud_storage_enable" value='False'>
     <label for="" class="control-label">Cloud</label>
-      <input id="cloud-enable" type="checkbox" name="ckan.cloud_storage_enable" value="1" {{ 'checked' if enabled_s3!='False' else '' }}>
+      <input id="cloud-enable" type="checkbox" name="ckan.cloud_storage_enable" value="1" {{ 'checked' if enabled_storage else '' }}>
     <p class="controls"><em>Currently only S3 Amazon is available</em></p>
     {{ form.select('ckan.cloud_storage_provider', label=_('Service provider'), id='cloud-storage-provider', options=conn_markdown, selected=data['ckan.cloud_storage_provider'] ) }}
     <label for="upload-failower" class="control-label">Failover</label>
     <fieldset id="upload-failower" class="controls">
-      <input type="radio" id="upload-failowers-local" name="ckan.cloud_failover" value=1 {{ 'checked' if failover_s3 == '1' }}></radio>
+      <input type="radio" id="upload-failowers-local" name="ckan.cloud_failover" value=1 {{ 'checked' if failover_handler or not failover_handler == '1' }}></radio>
       <label for="upload-failowers-local" class="without-colon inline-radio-label">Write upload to local</label>
       <br>
-      <input type="radio" id="upload-failower-abort" name="ckan.cloud_failover" value=2 {{ 'checked' if failover_s3 == '2' }}></radio>
+      <input type="radio" id="upload-failower-abort" name="ckan.cloud_failover" value=2 {{ 'checked' if failover_handler == '2' }}></radio>
       <label for="upload-failower-abort" class="without-colon inline-radio-label">Abort upload</label>
     </fieldset>
   </fieldset>

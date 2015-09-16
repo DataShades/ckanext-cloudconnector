@@ -3,6 +3,7 @@ import ckan.logic.action.create as origin
 import ckanext.cloud_connector.controllers.uploader as uploader
 import ckan.lib.uploader as origin_uploader
 import ckan.plugins.toolkit as tk
+import ckan.plugins as plugins
 
 from ckan.logic import (
   ValidationError,
@@ -19,7 +20,7 @@ __all__ = ['resource_create']
 
 def resource_create(context, data_dict):
   use_origin = not tk.asbool(config.get(
-    'ckan.cloud_storage_enable')) or data_dict.get('url')
+    'ckan.cloud_storage_enable') or 'false') or data_dict.get('upload') == ''
 
   model = context['model']
 
@@ -30,7 +31,7 @@ def resource_create(context, data_dict):
 
   _check_access('resource_create', context, data_dict)
 
-  if not 'resources' in pkg_dict:
+  if 'resources' not in pkg_dict:
     pkg_dict['resources'] = []
 
   upload = origin_uploader.ResourceUpload(data_dict) if use_origin \
@@ -59,9 +60,11 @@ def resource_create(context, data_dict):
 
   model.repo.commit()
 
-  ##  Run package show again to get out actual last_resource
   pkg_dict = _get_action('package_show')(context, {'id': package_id})
   resource = pkg_dict['resources'][-1]
+
+  for plugin in plugins.PluginImplementations(plugins.IResourceController):
+    plugin.after_create(context, resource)
 
   return resource
 

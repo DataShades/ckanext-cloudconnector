@@ -1,18 +1,10 @@
-import pylons
-
+from pylons import config
+from ckan.lib.base import abort
+import ckan.lib.app_globals as app_globals
 from ckan.lib.uploader import ResourceUpload
-
-config = pylons.config
 
 import logging
 log = logging.getLogger(__name__)
-
-from ckan.lib.base import abort
-
-import ckan.lib.app_globals as app_globals
-
-auto_update = app_globals.auto_update
-config_details = app_globals.config_details
 
 additional_config = {}
 
@@ -24,9 +16,8 @@ s3_option_items = {
 
 
 def add_storage_globals(options):
-  auto_update.extend(options.keys())
-  config_details.update(options)
   additional_config.update(options)
+  app_globals.app_globals_from_config_details.update(options)
 
 add_storage_globals(s3_option_items)
 

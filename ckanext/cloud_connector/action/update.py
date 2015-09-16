@@ -3,7 +3,7 @@ import ckan.logic.action.update as origin
 import ckanext.cloud_connector.controllers.uploader as uploader
 import ckan.lib.uploader as origin_uploader
 import ckan.plugins.toolkit as tk
-
+import ckan.plugins as plugins
 
 from ckan.logic import (
   NotFound,
@@ -21,7 +21,7 @@ __all__ = ['resource_update']
 
 def resource_update(context, data_dict):
   use_origin = not tk.asbool(config.get(
-    'ckan.cloud_storage_enable')) or data_dict.get('url')
+    'ckan.cloud_storage_enable') or 'false') or data_dict.get('upload') == ''
 
   model = context['model']
   id = _get_or_bust(data_dict, "id")
@@ -36,7 +36,10 @@ def resource_update(context, data_dict):
   _check_access('resource_update', context, data_dict)
   del context["resource"]
 
-  package_id = resource.resource_group.package.id
+  try:
+    package_id = resource.resource_group.package.id
+  except AttributeError:
+    package_id = resource.package_id
   pkg_dict = _get_action('package_show')(context, {'id': package_id})
 
   for n, p in enumerate(pkg_dict['resources']):
@@ -48,7 +51,6 @@ def resource_update(context, data_dict):
 
   upload = origin_uploader.ResourceUpload(data_dict) if use_origin \
       else uploader.make_uploader(data_dict)
-
   pkg_dict['resources'][n] = data_dict
 
   try:
@@ -67,6 +69,12 @@ def resource_update(context, data_dict):
     _get_action('package_update')(context, pkg_dict)
 
   model.repo.commit()
-  return _get_action('resource_show')(context, {'id': id})
+
+  resource = _get_action('resource_show')(context, {'id': id})
+
+  for plugin in plugins.PluginImplementations(plugins.IResourceController):
+      plugin.after_update(context, resource)
+
+  return resource
 
 resource_update.__doc__ = origin.resource_update.__doc__
